@@ -1,0 +1,15 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "initially a bot that classifies users as cool or uncool based on message counts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@gilmoregrills",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.0.0",
+    "mathjs": "^3.11.5"
+  }
+}
