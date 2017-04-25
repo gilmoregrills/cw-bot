@@ -1,6 +1,16 @@
+var fs = require("fs");
 var Discord = require("discord.js");
 var bot = new Discord.Client();
-//var ann1 = require("./coolClassifier.js");
+var keys = require("./keys.json");
+
+var botKey = keys.discord;
+bot.login(botKey)
+	.then(console.log("logged in with: "+botKey))
+	.catch(console.error);
+
+bot.on("ready", botRdy => {
+	console.log("bot is ready to go!")
+});
 
 var greetings = ["hello", "hi", "ahoy", "hey", "greetings", "yo", "bonjour"];
 
@@ -44,8 +54,6 @@ bot.on("message", msg => {
 			msg.react(bot.emojis.random())
 				.then(msg => console.log(`Reacted to ${msg.content}`))
 				.catch(console.error);
-		} else if (msg.content.includes("run" && "train")) {
-			console.log("does nothing right now");
 		} else {
 			console.log("received a message i didn't understand");
 			msg.reply("i'm not clever enough to understand that yet :( if you think I should be smarter maybe go yell at robin")
@@ -55,15 +63,4 @@ bot.on("message", msg => {
 	}
 });
 
-bot.on("ready", botRdy => {
-		console.log("bot is ready to go")
-		console.log("training ANN");
-		ann1.train();
-		console.log("ANN trained");
-});
-
-bot.login("");
-
 exports.bot = bot;
-//this should not be down here, but the current layout dictates that it must for now
-var ann1 = require("./coolClassifier.js");
