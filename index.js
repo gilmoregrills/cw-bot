@@ -19,9 +19,9 @@ bot.on("message", msg => {
 	if (msg.isMentioned(bot.user)) {
 		console.log("message is: \n"+msg.content);
 		if (greetings.toString().includes(msg.content.substring(22))) {
-			console.log("preparing to greet "+msg.author);
+			console.log("preparing to greet "+msg.author.username);
 			msg.reply("hi there!! ^^")
-				.then(msg => console.log(`Sent a reply to ${msg.author}`))
+				.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 				.catch(console.error);
 		} else if (msg.content.includes("i" && "cool")) {
 			console.log("preparing to see if this user is cool");
@@ -30,11 +30,11 @@ bot.on("message", msg => {
 			var responseNo = Math.round(Math.random());
 			if (responseNo == 0) {
 				msg.reply("right now i'm afraid not, sorry :(")
-					.then(msg => console.log(`Sent a reply to ${msg.author}`))
+					.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 					.catch(console.error);
 			} else {
 				msg.reply("you are!! so cool <3")
-					.then(msg => console.log(`Sent a reply to ${msg.author}`))
+					.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 					.catch(console.error);
 			}
 		} else if (msg.content.includes("@" && "cool")) {
@@ -43,11 +43,11 @@ bot.on("message", msg => {
 			var responseNo = Math.round(Math.random());
 			if (responseNo == 0) {
 				msg.reply("i'm sorry to say that "+user+" is not cool :/")
-					.then(msg => console.log(`Sent a reply to ${msg.author}`))
+					.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 					.catch(console.error);
 			} else {
 				msg.reply("omg yes "+user+" is SO cool ^^")
-					.then(msg => console.log(`Sent a reply to ${msg.author}`))
+					.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 					.catch(console.error);
 			}
 		} else if (msg.content.includes("react")) {
@@ -55,26 +55,44 @@ bot.on("message", msg => {
 			msg.react(bot.emojis.random())
 				.then(msg => console.log(`Reacted to ${msg.content}`))
 				.catch(console.error);
-		} else if (msg.content.includes("warn") {
-			console.log("logging content warning request");
+		} else if (msg.content.includes("warn")) {
+			console.log("logging content warning request for "+msg.content.substring(27));
 			//var word = parse the message to find the word alone
-			addTrigger(word, msg.author.username);
+			addTrigger(msg.content.substring(27), msg.author.username);
+			fs.writeFile("triggers.json", JSON.stringify(triggers), (err) => {
+				if (err) throw (err);
+				console.log("JSON updated!");
+			});
 			msg.reply("keyword added, I'll keep an eye out!")
-				.then(msg => console.log(`Sent a reply to ${msg.author}`))
+				.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 				.catch(console.error);
-		}
 		} else {
 			console.log("received a message i didn't understand");
-			msg.reply("i'm not clever enough to understand that yet :( if you think I should be smarter maybe go yell at robin")
-				.then(msg => console.log(`Sent a reply to ${msg.author}`))
-				.catch(console.error);
+			//msg.reply("i'm not clever enough to understand that yet :( if you think I should be smarter maybe go yell at robin")
+			//	.then(msg => console.log(`Sent a reply to ${msg.author}`))
+			//	.catch(console.error);
 		}
 	} //if mentioned
-	else if (var trigger = checkTriggers(msg.content) != "none") {
+	else if (checkTriggers(msg.content) != "none" && msg.author.username != "rob-bot" && msg.channel.type != "dm") {
 		console.log("preparing content warning");
-		bot.users.find("username", "gilmoregrills#3990").sendMessage("just a heads up that "+trigger+" is being discussed in "+msg.channel.name)
-			.then(msg => console.log("sent a content warning for: "+trigger))
-			.catch(console.error);
+		var trigger = checkTriggers(msg.content);
+		var usersToWarn = new Array();
+		console.log("checking whose trigger this is from: "+triggers);
+		for (var user in triggers) {
+			console.log("name = "+user+" value = "+triggers[user]+"\ntype test: "+typeof user);
+			if (triggers[user].includes(trigger)) {
+				usersToWarn.push(user);
+			}
+		}
+		console.log("warning the following users: "+usersToWarn);
+		for (var j = 1; j < usersToWarn.length; j++) {
+			console.log(usersToWarn[j]);
+			bot.users.find("username", usersToWarn[j]).sendMessage("content warning for "+trigger+" in channel "+msg.channel.name)
+				.then(console.log("sending content warning"))
+				.catch(console.error);
+			
+		}
+
 	}
 });
 
@@ -89,8 +107,9 @@ function addTrigger(trigger, username) {
 }
 
 function checkTriggers(message) {
-	for (trigger in triggers.all) {
-		if (message.includes(trigger) {
+	for (var i = 0; i < triggers.all.length; i++) {
+		var trigger = triggers.all[i];
+		if (message.includes(trigger)) {
 			return trigger;
 			//return the trigger and break off
 		}

@@ -1,0 +1,2 @@
+to run: 
+node index.js >stdout.txt >stderr.txt &
