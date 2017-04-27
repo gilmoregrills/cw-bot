@@ -66,6 +66,21 @@ bot.on("message", msg => {
 			msg.reply("keyword added, I'll keep an eye out!")
 				.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 				.catch(console.error);
+		} else if (msg.content.includes("safe")) {
+			console.log("the coast is clear for: "+msg.content.substring(27));
+			var trigger = checkTriggers(msg.content);
+			var usersToNotify = new Array();
+			for (var user in triggers) {
+				if (triggers[user].includes(trigger)) {
+					usersToNotify.push(user);
+				}
+			}
+			console.log("sounding the all-clear to the following users: "+usersToNotify);
+			for (var j = 1; j < usersToNotify.length; j++) {
+				bot.users.find("username", usersToNotify[j]).sendMessage("they've sounded the all-clear for "+trigger+" in channel "+msg.channel.name)
+					.then(console.log("sending all-clear"))
+					.catch(console.error);
+			}
 		} else {
 			console.log("received a message i didn't understand");
 			//msg.reply("i'm not clever enough to understand that yet :( if you think I should be smarter maybe go yell at robin")
@@ -77,7 +92,6 @@ bot.on("message", msg => {
 		console.log("preparing content warning");
 		var trigger = checkTriggers(msg.content);
 		var usersToWarn = new Array();
-		console.log("checking whose trigger this is from: "+triggers);
 		for (var user in triggers) {
 			console.log("name = "+user+" value = "+triggers[user]+"\ntype test: "+typeof user);
 			if (triggers[user].includes(trigger)) {
@@ -97,7 +111,9 @@ bot.on("message", msg => {
 });
 
 function addTrigger(trigger, username) {
-	triggers.all.push(trigger);
+	if (!triggers.all.includes(trigger)) {
+		triggers.all.push(trigger);
+	}
 	if (triggers.hasOwnProperty(username)) {
 		//add trigger to array where key == username
 		triggers[username].push(trigger);
