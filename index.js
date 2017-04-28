@@ -13,9 +13,14 @@ bot.on("ready", botRdy => {
 	console.log("bot is ready to go!")
 });
 
+//a test to see if the bot is working on the server
 var greetings = ["hello", "hi", "ahoy", "hey", "greetings", "yo", "bonjour"];
 
+/**
+ * on every message sent on a server where this bot is present
+ */
 bot.on("message", msg => {
+	//if the bot is @ mentioned, the message is a command and this conditional block is run
 	if (msg.isMentioned(bot.user)) {
 		console.log("message is: \n"+msg.content);
 		if (greetings.toString().includes(msg.content.substring(22))) {
@@ -88,6 +93,7 @@ bot.on("message", msg => {
 			//	.catch(console.error);
 		}
 	} //if mentioned
+	//if the bot isn't mentioned, it just reads the message, checking for keywords that have been registered with it
 	else if (checkTriggers(msg.content) != "none" && msg.author.username != "rob-bot" && msg.channel.type != "dm") {
 		console.log("preparing content warning");
 		var trigger = checkTriggers(msg.content);
@@ -110,6 +116,10 @@ bot.on("message", msg => {
 	}
 });
 
+/**
+ * Adds a new trigger to the list of all triggers, as well as one for
+ * the individual user who requested the warning
+ */
 function addTrigger(trigger, username) {
 	if (!triggers.all.includes(trigger)) {
 		triggers.all.push(trigger);
@@ -122,6 +132,9 @@ function addTrigger(trigger, username) {
 	}
 }
 
+/**
+ * Checks if a given message contains any of the trigger keywords
+ */
 function checkTriggers(message) {
 	for (var i = 0; i < triggers.all.length; i++) {
 		var trigger = triggers.all[i];
