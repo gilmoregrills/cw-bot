@@ -1,5 +1,8 @@
-Link to add this bot to a server: 
+Link to add this bot to a server if any internet randos stumble across this project: 
+
 https://discordapp.com/oauth2/authorize?client_id=302111013279498240&scope=bot&permissions=0
+
+The bot is currently somewhat unpolished, so treat it like a beta/pre-release.
 
 #Content Warnings
 
