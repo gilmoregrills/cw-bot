@@ -4,7 +4,7 @@ https://discordapp.com/oauth2/authorize?client_id=302111013279498240&scope=bot&p
 
 The bot is currently somewhat unpolished, so treat it like a beta/pre-release.
 
-#Content Warnings
+**Content Warnings**
 
 To add a warning/associate a keyword with your user the chat command is: *@[botname] warn [keyword]* with everything after "warn" taken as the keyword/phrase. 
 
@@ -18,7 +18,7 @@ This will send a message out to anyone that has made the bot aware of their aver
 In the background, the bot scans every message for items from the list of all keywords. If found, it searches each user's personal lists and if it finds the keyword it adds them to the list of users that need warning. Then the bot sends a DM to every user on that list with the type of content as well as the channel.
 
 
-##Upcoming updates: 
+**Upcoming updates: **
 
 *(open an issue or something or hit me up elsewhere if there's anything anyone would like to see added/fixed/updated)*
 
