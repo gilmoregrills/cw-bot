@@ -87,6 +87,11 @@ bot.on("message", msg => {
 						.then(console.log("sending all-clear"))
 						.catch(console.error);
 				}
+			} else if (msg.content.includes("help")) { //help text
+				console.log("printing help text");
+				msg.reply("to add a keyword for monitoring, use:\n@rob-bot warn <keyword>")
+					.then(msg => console.log(`Printed help text`))
+					.catch(console.error);
 			} else {
 				console.log("received a message i didn't understand");
 				//msg.reply("i'm not clever enough to understand that yet :( if you think I should be smarter maybe go yell at robin")
