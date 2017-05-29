@@ -8,6 +8,8 @@ The bot is currently somewhat unpolished, so treat it like a beta.
 
 To add a warning/associate a keyword with your user the chat command is: *@[botname] warn [keyword]* with everything after "warn" taken as the keyword/phrase. 
 
+Help text can be viewed in *discord with @rob-bot help*
+
 The bot will reply with a confirmation message, and add an array containing the keyword to a JSON object with the key as the ID of the user - or update an existing one. It also adds the keyword to a list of all the words it's keeping an eye on. 
 
 Once you're done talking about a subject that you think/know required content warnings, sound the all-clear with: *@[botname] safe [keyword]*
