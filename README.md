@@ -2,7 +2,7 @@ Link to add this bot to a server if any internet randos stumble across this proj
 
 https://discordapp.com/oauth2/authorize?client_id=302111013279498240&scope=bot&permissions=0
 
-The bot is currently somewhat unpolished, so treat it like a beta/pre-release.
+The bot is currently somewhat unpolished, so treat it like a beta.
 
 **Content Warnings**
 
@@ -22,7 +22,7 @@ In the background, the bot scans every message for items from the list of all ke
 
 *(open an issue or something or hit me up elsewhere if there's anything anyone would like to see added/fixed/updated)*
 
-1. Rate limiting on the DM warnings, currently it sends a warning every time the word is mentioned so it's kinda spammy.
+1. ~~Rate limiting on the DM warnings, currently it sends a warning every time the word is mentioned so it's kinda spammy.~~
 2. Cleaning up the code/adding comments, the thing was made in a bit of a rush and there's at least one instance where I repeated some lines instead of spinning it out into a function. 
 3. ~~Sorting out the storage to handle multiple servers if needs be - doesn't need to be more fancy than JSON files given the simplicity of the data being stored, just need to keep the data unique to each server.~~ users are now identified by IDs instead of usernames, and warnings are sent out only to users on the server that the message originated from. 
 4. ~~Adding the add-bot link to this README so that the bot can be used on other servers.~~
