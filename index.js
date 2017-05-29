@@ -69,10 +69,6 @@ bot.on("message", msg => {
 				console.log("logging content warning request for "+msg.content.substring(27));
 				//var word = parse the message to find the word alone
 				addTrigger(msg.content.substring(27), msg.author.id, msg.guild.name);
-				fs.writeFile("triggers.json", JSON.stringify(triggers, null, "\t"), (err) => {
-					if (err) throw (err);
-					console.log("JSON updated!");
-				});
 				msg.reply("keyword added, I'll keep an eye out!")
 					.then(msg => console.log(`Sent a reply to ${msg.author.username}`))
 					.catch(console.error);
@@ -101,26 +97,59 @@ bot.on("message", msg => {
 		//if the bot isn't mentioned, it just reads the message, checking for keywords that have been registered with it
 		else if (checkTriggers(msg.content, msg.guild.name) != "none" && msg.channel.type != "dm") {
 			console.log("preparing content warning");
+			console.log(msg.createdTimestamp);
 			var trigger = checkTriggers(msg.content, msg.guild.name);
-			var usersToWarn = new Array();
-			for (var user in triggers.servers[msg.guild.name]) {
-				if (triggers.servers[msg.guild.name][user].includes(trigger)) {
-					usersToWarn.push(user);
+			if (!warningRateLimit(trigger, msg.createdTimestamp, msg.guild.name)) {
+				var usersToWarn = new Array();
+				for (var user in triggers.servers[msg.guild.name]) {
+					if (triggers.servers[msg.guild.name][user].includes(trigger)) {
+						usersToWarn.push(user);
+					}
+				}
+				console.log("warning the following users: "+usersToWarn);			
+				for (var j = 1; j < usersToWarn.length; j++) {
+					console.log(usersToWarn[j]);
+					//console.log(bot.guilds.find("name", msg.guild.name).members.get(usersToWarn[j]));
+					bot.guilds.find("name", msg.guild.name).members.get(usersToWarn[j]).sendMessage("content warning for "+trigger+" in channel "+msg.channel.name)
+						.then(console.log("sending content warning"))
+						.catch(console.error);
+					
 				}
 			}
-			console.log("warning the following users: "+usersToWarn);
-			for (var j = 1; j < usersToWarn.length; j++) {
-				console.log(usersToWarn[j]);
-				//console.log(bot.guilds.find("name", msg.guild.name).members.get(usersToWarn[j]));
-				bot.guilds.find("name", msg.guild.name).members.get(usersToWarn[j]).sendMessage("content warning for "+trigger+" in channel "+msg.channel.name)
-					.then(console.log("sending content warning"))
-					.catch(console.error);
-				
-			}
-
 		}
 	}
 });
+
+/**
+ * Checks if a warning was generated in the last fifteen minutes
+ * if yes, true, if not returns false and adds the warning to a
+ * list of recent warnings for that server to stop spam
+ */
+function warningRateLimit(trigger, time, server) {
+	//check if warning object exists
+	for (warning in triggers.servers[server].recentWarnings) {
+		console.log("checking the following warning for: "+trigger);
+		console.log(warning);
+		console.log(triggers.servers[server].recentWarnings[warning]);
+		if ((time - triggers.servers[server].recentWarnings[warning].time) >= 900000) {
+			triggers.servers[server].recentWarnings.splice(warning, 1);
+			console.log("deleting old warning");
+		} else if (triggers.servers[server].recentWarnings[warning].word == trigger && (time - triggers.servers[server].recentWarnings[warning].time) < 900000) {
+			console.log("warning recently sent");
+			return true;
+		}
+	}
+	console.log("warning not yet sent, adding to recentWarnings");
+	triggers.servers[server].recentWarnings.push({
+		word: trigger,
+		time: time
+	});
+	fs.writeFile("triggers.json", JSON.stringify(triggers, null, "\t"), (err) => {
+		if (err) throw (err);
+		console.log("JSON updated!");
+	});
+	return false;
+}
 
 /**
  * Checks if a record of the server exists in the JSON, adds if not
@@ -129,6 +158,7 @@ function serverRecordExists(serverName) {
 	if (!triggers.servers.hasOwnProperty(serverName)) {
 		triggers.servers[serverName] = {};
 		triggers.servers[serverName].all = new Array();
+		triggers.servers[serverName].recentWarnings = new Array();
 		console.log("new server record created for "+serverName);
 		fs.writeFile("triggers.json", JSON.stringify(triggers), (err) => {
 			if (err) throw (err);
@@ -151,6 +181,11 @@ function addTrigger(trigger, username, server) {
 	} else {
 		triggers.servers[server][username] = [trigger];
 	}
+	fs.writeFile("triggers.json", JSON.stringify(triggers, null, "\t"), (err) => {
+		if (err) throw (err);
+		console.log("JSON updated!");
+	});
+
 }
 
 /**
